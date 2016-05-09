@@ -23,6 +23,9 @@ store that in another messages object
 
 
 //var exports = module.exports = {};
+var storage = {
+  results: []
+};
 var requestHandler = function(request, response) {
 
 
@@ -34,6 +37,8 @@ var requestHandler = function(request, response) {
   //
   // Documentation for both request and response can be found in the HTTP section at
   // http://nodejs.org/documentation/api/
+  var statusCode = 200;
+
 
   // Do some basic logging.
   //
@@ -43,7 +48,6 @@ var requestHandler = function(request, response) {
   console.log('Serving request type ' + request.method + ' for url ' + request.url);
 
   // The outgoing status.
-  var statusCode = 200;
 
   // See the note below about CORS headers.
   var headers = defaultCorsHeaders;
@@ -54,6 +58,21 @@ var requestHandler = function(request, response) {
   // other than plain text, like JSON or HTML.
   headers['Content-Type'] = 'text/plain';
 
+//handle post
+  if (request.method === 'POST') {
+    var body = [];
+    request.on('data', function(chunk) {
+      body.push(chunk);
+    }).on('end', function() {
+      body = Buffer.concat(body).toString();
+      storage.results.push(JSON.parse(body));
+    });
+    statusCode = 201;
+  } 
+  //check URL return 404 if invalid 
+  if (request.url !== '/classes/messages') {
+    statusCode = 404;
+  }
   // .writeHead() writes to the request line and headers of the response,
   // which includes the status and all headers.
   response.writeHead(statusCode, headers);
@@ -65,8 +84,12 @@ var requestHandler = function(request, response) {
   //
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
-  
-  response.write(JSON.stringify({results:[]}));
+  // response.write();
+
+  if (request.method === 'GET') {
+    response.write(JSON.stringify(storage));
+  }
+  console.log(storage);
   response.end();
 };
 
