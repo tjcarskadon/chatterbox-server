@@ -12,7 +12,20 @@ this file and include it in basic-server.js so that it actually works.
 
 **************************************************************/
 
+/*********Notes *******************************
+
+message needs to have, username, test, roomname, and an ID
+store that in another messages object
+
+
+*/
+
+
+
+//var exports = module.exports = {};
 var requestHandler = function(request, response) {
+
+
   // Request and Response come from node's http module.
   //
   // They include information about both the incoming request, such as
@@ -52,7 +65,9 @@ var requestHandler = function(request, response) {
   //
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
-  response.end('Hello, World!');
+  
+  response.write(JSON.stringify({results:[]}));
+  response.end();
 };
 
 // These headers will allow Cross-Origin Resource Sharing (CORS).
@@ -71,3 +86,4 @@ var defaultCorsHeaders = {
   'access-control-max-age': 10 // Seconds.
 };
 
+exports.requestHandler = requestHandler;
