@@ -61,7 +61,6 @@ var requestHandler = function(request, response) {
 //handle post
   if (request.method === 'POST') {
     statusCode = 201;
-    
     request.on('data', function(chunk) {
       storage.results.push(JSON.parse(chunk));  
     });
