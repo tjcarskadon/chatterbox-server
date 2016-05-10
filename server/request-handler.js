@@ -60,17 +60,16 @@ var requestHandler = function(request, response) {
 
 //handle post
   if (request.method === 'POST') {
-    var body = [];
-    request.on('data', function(chunk) {
-      body.push(chunk);
-    }).on('end', function() {
-      body = Buffer.concat(body).toString();
-      storage.results.push(JSON.parse(body));
-    });
     statusCode = 201;
+    
+    request.on('data', function(chunk) {
+      storage.results.push(JSON.parse(chunk));  
+      console.log(storage);
+    });
   } 
+
   //check URL return 404 if invalid 
-  if (request.url !== '/classes/messages') {
+  if (request.url.indexOf('classes') === -1) {
     statusCode = 404;
   }
   // .writeHead() writes to the request line and headers of the response,
@@ -87,10 +86,10 @@ var requestHandler = function(request, response) {
   // response.write();
 
   if (request.method === 'GET') {
-    response.write(JSON.stringify(storage));
+    response.end(JSON.stringify(storage));
+  } else {
+    response.end();
   }
-  console.log(storage);
-  response.end();
 };
 
 // These headers will allow Cross-Origin Resource Sharing (CORS).
@@ -107,6 +106,10 @@ var defaultCorsHeaders = {
   'access-control-allow-methods': 'GET, POST, PUT, DELETE, OPTIONS',
   'access-control-allow-headers': 'content-type, accept',
   'access-control-max-age': 10 // Seconds.
+};
+
+var newWrite = function (string) {
+
 };
 
 exports.requestHandler = requestHandler;
