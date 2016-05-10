@@ -64,7 +64,6 @@ var requestHandler = function(request, response) {
     
     request.on('data', function(chunk) {
       storage.results.push(JSON.parse(chunk));  
-      console.log(storage);
     });
   } 
 
@@ -85,11 +84,7 @@ var requestHandler = function(request, response) {
   // node to actually send all the data over to the client.
   // response.write();
 
-  if (request.method === 'GET') {
-    response.end(JSON.stringify(storage));
-  } else {
-    response.end();
-  }
+  response.end(JSON.stringify(storage));
 };
 
 // These headers will allow Cross-Origin Resource Sharing (CORS).
